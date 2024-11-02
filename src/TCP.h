@@ -29,7 +29,7 @@
 
 #include "InfluxDB/Transport.h"
 
-#include <boost/asio.hpp>
+// #include <boost/asio.hpp>
 #include <chrono>
 #include <string>
 
@@ -53,14 +53,16 @@ namespace influxdb::transports
         void reconnect();
 
     private:
+        struct tcp_pcb* pcb;
+        struct ip_addr_t ipaddr;
         /// Boost Asio I/O functionality
-        boost::asio::io_service mIoService;
+        // boost::asio::io_service mIoService;
 
-        /// TCP socket
-        boost::asio::ip::tcp::socket mSocket;
+        // /// TCP socket
+        // boost::asio::ip::tcp::socket mSocket;
 
-        /// TCP endpoint
-        boost::asio::ip::tcp::endpoint mEndpoint;
+        // /// TCP endpoint
+        // boost::asio::ip::tcp::endpoint mEndpoint;
     };
 
 } // namespace influxdb::transports

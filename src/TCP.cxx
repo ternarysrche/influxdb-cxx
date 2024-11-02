@@ -33,26 +33,36 @@ namespace influxdb::transports
     namespace ba = boost::asio;
 
     TCP::TCP(const std::string& hostname, int port)
-        : mSocket(mIoService)
+        // : mSocket(mIoService)
     {
-        ba::ip::tcp::resolver resolver(mIoService);
-        ba::ip::tcp::resolver::query query(hostname, std::to_string(port));
-        ba::ip::tcp::resolver::iterator resolverIterator = resolver.resolve(query);
-        ba::ip::tcp::resolver::iterator end;
-        mEndpoint = *resolverIterator;
-        mSocket.open(mEndpoint.protocol());
-        reconnect();
+        // NEED TO REWRITE
+        pcb = tcp_new();
+        ipaddr_aton(hostname, ipaddr);
+        tcp_bind(pcb, ipaddr, 12345); // WHAT'S THE PORT NUMBER
+        
+        
+        // ba::ip::tcp::resolver resolver(mIoService);
+        // ba::ip::tcp::resolver::query query(hostname, std::to_string(port));
+        // ba::ip::tcp::resolver::iterator resolverIterator = resolver.resolve(query);
+        // ba::ip::tcp::resolver::iterator end;
+        // mEndpoint = *resolverIterator;
+        // mSocket.open(mEndpoint.protocol());
+        // reconnect();
     }
 
     bool TCP::is_connected() const
     {
-        return mSocket.is_open();
+        return nullptr;
+
+        // return mSocket.is_open();
     }
 
     void TCP::reconnect()
     {
-        mSocket.connect(mEndpoint);
-        mSocket.wait(ba::ip::tcp::socket::wait_write);
+        return;
+
+        // mSocket.connect(mEndpoint);
+        // mSocket.wait(ba::ip::tcp::socket::wait_write);
     }
 
     void TCP::send(std::string&& message)
@@ -60,15 +70,17 @@ namespace influxdb::transports
         try
         {
             message.append("\n");
-            const size_t written = mSocket.write_some(ba::buffer(message, message.size()));
-            if (written != message.size())
-            {
-                throw InfluxDBException("Error while transmitting data");
-            }
+            tcp_write(pcb, message, message.size(), TCP_WRITE_FLAG_COPY);
+            tcp_output(pcb);
+            // const size_t written = mSocket.write_some(ba::buffer(message, message.size()));
+            // if (written != message.size())
+            // {
+            //     throw InfluxDBException("Error while transmitting data");
+            // }
         }
-        catch (const boost::system::system_error& e)
+        catch // (const boost::system::system_error& e)
         {
-            throw InfluxDBException(e.what());
+            throw InfluxDBException("Error while transmitting data");
         }
     }
 
