@@ -74,14 +74,14 @@ namespace http
     {
         int port;
         std::string portstring = TailSlice(hostport, ":");
-        try
-        {
+        // try
+        // {
             port = atoi(portstring.c_str());
-        }
-        catch (const std::exception&)
-        {
-            port = -1;
-        }
+        // }
+        // catch (const std::exception&)
+        // {
+        //     port = -1;
+        // }
         return port;
     }
 

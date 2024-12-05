@@ -32,6 +32,9 @@
 // #include <boost/asio.hpp>
 #include <chrono>
 #include <string>
+#include "lwip.h"
+#include "lwip/tcp.h"
+#include "lwip/ip_addr.h"
 
 namespace influxdb::transports
 {
@@ -46,15 +49,19 @@ namespace influxdb::transports
         /// Sends blob via TCP
         void send(std::string&& message) override;
 
+        std::string query(const std::string& query) override;
+
         /// check if socket is connected
         bool is_connected() const;
 
         /// reconnect socket
         void reconnect();
 
+        
+
     private:
         struct tcp_pcb* pcb;
-        struct ip_addr_t ipaddr;
+        ip_addr_t* ipaddr;
         /// Boost Asio I/O functionality
         // boost::asio::io_service mIoService;
 

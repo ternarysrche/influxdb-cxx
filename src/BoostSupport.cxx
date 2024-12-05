@@ -85,14 +85,14 @@ namespace influxdb::internal
                             continue;
                         }
                         // cast all values to double, if strings add to tags
-                        try
-                        {
+                        // try
+                        // {
                             point.addField(column, boost::lexical_cast<double>(value));
-                        }
-                        catch (...)
-                        {
-                            point.addTag(column, value);
-                        }
+                        // }
+                        // catch (...)
+                        // {
+                        //     point.addTag(column, value);
+                        // }
                     }
                     points.push_back(std::move(point));
                 }

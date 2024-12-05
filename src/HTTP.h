@@ -32,7 +32,7 @@
 #include <memory>
 #include <string>
 #include <chrono>
-#include <cpr/cpr.h>
+// #include <cpr/cpr.h>
 
 namespace influxdb::transports
 {
@@ -78,7 +78,7 @@ namespace influxdb::transports
     private:
         std::string endpointUrl;
         std::string databaseName;
-        cpr::Session session;
+        // cpr::Session session;
     };
 
 } // namespace influxdb

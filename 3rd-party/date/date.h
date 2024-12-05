@@ -4945,7 +4945,8 @@ scan_keyword(std::basic_istream<CharT, Traits>& is, FwdIter kb, FwdIter ke)
     {
         status = (unsigned char*)std::malloc(nkw);
         if (status == nullptr)
-            throw std::bad_alloc();
+            // throw std::bad_alloc();
+            return ke; //just returning random value so exception not thrown
         stat_hold.reset(status);
     }
     size_t n_might_match = nkw;  // At this point, any keyword might match

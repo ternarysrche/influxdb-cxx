@@ -41,14 +41,14 @@ namespace influxdb::transports
 
     void UnixSocket::send(std::string&& message)
     {
-        try
-        {
+        // try
+        // {
             mSocket.send_to(boost::asio::buffer(message, message.size()), mEndpoint);
-        }
-        catch (const boost::system::system_error& e)
-        {
-            throw InfluxDBException(e.what());
-        }
+        // }
+        // catch (const boost::system::system_error& e)
+        // {
+        //     throw InfluxDBException(e.what());
+        // }
     }
 
 #else

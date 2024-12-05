@@ -55,7 +55,7 @@ namespace influxdb
 
         /// Writes a point
         /// \param point
-        void write(Point&& point);
+        std::string write(Point&& point);
 
         /// Writes a vector of point
         /// \param point
@@ -105,7 +105,7 @@ namespace influxdb
         std::unique_ptr<Transport> mTransport;
 
         /// Transmits string over transport
-        void transmit(std::string&& point);
+        std::string transmit(std::string&& point);
 
         /// List of global tags
         std::string mGlobalTags;

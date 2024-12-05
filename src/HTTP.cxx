@@ -36,11 +36,13 @@ namespace influxdb::transports
         {
             if (resp.error)
             {
-                throw InfluxDBException{"Request error: (" + std::to_string(static_cast<int>(resp.error.code)) + ") " + resp.error.message};
+                // throw InfluxDBException{"Request error: (" + std::to_string(static_cast<int>(resp.error.code)) + ") " + resp.error.message};
+                return;
             }
             if (!cpr::status::is_success(resp.status_code))
             {
-                throw InfluxDBException{"Request failed: (" + std::to_string(resp.status_code) + ") " + resp.reason + " (message: '" + resp.text + "')"};
+                // throw InfluxDBException{"Request failed: (" + std::to_string(resp.status_code) + ") " + resp.reason + " (message: '" + resp.text + "')"};
+                return;
             }
         }
 
@@ -65,7 +67,8 @@ namespace influxdb::transports
 
             if (dbParameterPosition == std::string::npos)
             {
-                throw InfluxDBException{"No Database specified"};
+                // throw InfluxDBException{"No Database specified"};
+                return "";
             }
             return url.substr(dbParameterPosition + 4);
         }
