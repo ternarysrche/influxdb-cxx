@@ -47,16 +47,20 @@ namespace influxdb
         virtual void send(std::string&& message) = 0;
 
         /// Sends request
-        virtual std::string query([[maybe_unused]] const std::string& query);
+        virtual std::string query([[maybe_unused]] const std::string& query) {
+            return "Query not implemented!";
+        }
 
         /// Executes command
-        virtual std::string execute([[maybe_unused]] const std::string& cmd);
+        virtual std::string execute([[maybe_unused]] const std::string& cmd) {
+            return "Execute not implemented!";
+        }
 
         /// Sends request
-        virtual void createDatabase();
+        virtual void createDatabase() {}
 
         /// Sets proxy
-        virtual void setProxy([[maybe_unused]] const Proxy& proxy);
+        virtual void setProxy([[maybe_unused]] const Proxy& proxy) {}
     };
 
 } // namespace influxdb

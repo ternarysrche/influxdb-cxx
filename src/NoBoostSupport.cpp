@@ -23,6 +23,7 @@
 
 #include "BoostSupport.h"
 #include "InfluxDB/InfluxDBException.h"
+#include "TCP.h"
 
 namespace influxdb::internal
 {
@@ -40,7 +41,7 @@ namespace influxdb::internal
 
     std::unique_ptr<Transport> withTcpTransport([[maybe_unused]] const http::url& uri)
     {
-        return {};
+        return std::make_unique<transports::TCP>(uri.host, uri.port);
         // throw InfluxDBException("TCP transport requires Boost");
     }
 
