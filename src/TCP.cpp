@@ -27,23 +27,37 @@
 #include "TCP.h"
 #include "InfluxDB/InfluxDBException.h"
 #include <string>
+#include <string.h>
 #include "lwip.h"
 #include "lwip/tcp.h"
+#include "telemetry_m7.h"
 #include "lwip/ip_addr.h"
+
+static bool connected = false;
 
 namespace influxdb::transports
 {
     // namespace ba = boost::asio;
 
+    err_t connected_callback_fun(void* arg, struct tcp_pcb *tpcb, err_t err) {
+        (void)(arg);
+        (void)(tpcb);
+        LOG("finished connecting with error %d", err);
+        connected = true;
+        return ERR_OK;
+    }
+
     TCP::TCP(const std::string& hostname, int port)
         // : mSocket(mIoService)
     {
         // NEED TO REWRITE
+        LOG("constructor called with port %d", port);
         pcb = tcp_new();
         ipaddr_aton(hostname.c_str(), ipaddr);
+        LOG("ipaddr = %lx", ipaddr->addr);
         tcp_bind(pcb, ipaddr, port); // WHAT'S THE PORT NUMBER
         
-        
+        tcp_connect(pcb, ipaddr, port, connected_callback_fun);
         // ba::ip::tcp::resolver resolver(mIoService);
         // ba::ip::tcp::resolver::query query(hostname, std::to_string(port));
         // ba::ip::tcp::resolver::iterator resolverIterator = resolver.resolve(query);
@@ -78,12 +92,20 @@ namespace influxdb::transports
     {
         // try
         // {
-        message = message;
-        return;
+        // message = message;
+        // return;
             // message.append("\n");
-            // tcp_write(pcb, message, message.size(), TCP_WRITE_FLAG_COPY);
-            // tcp_output(pcb);
-
+            if(!connected) {
+                LOG("not connected yet, aborting");
+                return;
+            }
+            if(pcb == nullptr) {
+                LOG("pcb is null!!");
+            }
+            char* message_str = (char*)message.c_str();
+            err_t write_result = tcp_write(pcb, (void*)message_str, strlen(message_str), TCP_WRITE_FLAG_COPY);
+            err_t output_result = tcp_output(pcb);
+            LOG("wrote data with result %d, output with result %d", write_result, output_result);
 
             // const size_t written = mSocket.write_some(ba::buffer(message, message.size()));
             // if (written != message.size())

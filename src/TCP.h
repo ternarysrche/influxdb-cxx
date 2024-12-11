@@ -57,8 +57,6 @@ namespace influxdb::transports
         /// reconnect socket
         void reconnect();
 
-        
-
     private:
         struct tcp_pcb* pcb;
         ip_addr_t* ipaddr;

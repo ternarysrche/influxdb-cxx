@@ -106,8 +106,8 @@ namespace influxdb
         // point = point;
         // return point;
         if (mTransport){
-            return "transport is not null";
             mTransport->send(std::move(point));
+            return "transport is not null";
         }
         else{
             return "transport is null";
