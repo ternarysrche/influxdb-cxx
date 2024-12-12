@@ -32,8 +32,17 @@
 #include "lwip/tcp.h"
 #include "telemetry_m7.h"
 #include "lwip/ip_addr.h"
-
+extern struct netif gnetif;
 static bool connected = false;
+// static bool link_up = false;
+
+// void tcp_socket_notify_up() {
+//     link_up = true;
+// }
+
+// void tcp_socket_notify_down() {
+//     link_up = false;
+// }
 
 namespace influxdb::transports
 {
@@ -51,13 +60,14 @@ namespace influxdb::transports
         // : mSocket(mIoService)
     {
         // NEED TO REWRITE
+        iconnected = false;
+        this->port = port;
         LOG("constructor called with port %d", port);
         pcb = tcp_new();
         ipaddr_aton(hostname.c_str(), ipaddr);
         LOG("ipaddr = %lx", ipaddr->addr);
         tcp_bind(pcb, ipaddr, port); // WHAT'S THE PORT NUMBER
         
-        tcp_connect(pcb, ipaddr, port, connected_callback_fun);
         // ba::ip::tcp::resolver resolver(mIoService);
         // ba::ip::tcp::resolver::query query(hostname, std::to_string(port));
         // ba::ip::tcp::resolver::iterator resolverIterator = resolver.resolve(query);
@@ -95,10 +105,25 @@ namespace influxdb::transports
         // message = message;
         // return;
             // message.append("\n");
+            if(!iconnected) {
+                LOG("iconnected OFF");
+                if(netif_is_link_up(&gnetif)) {
+                    LOG("now connecting");
+                    tcp_pcb* result = tcp_listen(pcb);
+                    if(result == nullptr) {
+                        LOG("listen failed!!!");
+                    }
+                    tcp_accept(pcb, connected_callback_fun);
+                    // tcp_connect(pcb, ipaddr, port, connected_callback_fun);
+                    iconnected = true;
+                }
+                return;
+            }
             if(!connected) {
                 LOG("not connected yet, aborting");
                 return;
             }
+            LOG("actually sending");
             if(pcb == nullptr) {
                 LOG("pcb is null!!");
             }

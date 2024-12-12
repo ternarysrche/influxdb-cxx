@@ -34,7 +34,7 @@
 #include "UriParser.h"
 #include "HTTP.h"
 #include "BoostSupport.h"
-
+#include "telemetry_m7.h"
 namespace influxdb
 {
     namespace internal
@@ -67,6 +67,7 @@ namespace influxdb
 
         auto urlCopy = url;
         http::url parsedUrl = http::ParseHttpUrl(urlCopy);
+        LOG("did not crash");
         if (parsedUrl.protocol.empty())
         {
             // throw InfluxDBException("Ill-formed URI");

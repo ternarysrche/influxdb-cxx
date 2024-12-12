@@ -36,6 +36,9 @@
 #include "lwip/tcp.h"
 #include "lwip/ip_addr.h"
 
+void tcp_socket_notify_up();
+void tcp_socket_notify_down();
+
 namespace influxdb::transports
 {
 
@@ -60,6 +63,8 @@ namespace influxdb::transports
     private:
         struct tcp_pcb* pcb;
         ip_addr_t* ipaddr;
+        int port;
+        bool iconnected;
         /// Boost Asio I/O functionality
         // boost::asio::io_service mIoService;
 
