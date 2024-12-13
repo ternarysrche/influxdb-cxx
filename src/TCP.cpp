@@ -109,12 +109,12 @@ namespace influxdb::transports
                 LOG("iconnected OFF");
                 if(netif_is_link_up(&gnetif)) {
                     LOG("now connecting");
-                    tcp_pcb* result = tcp_listen(pcb);
-                    if(result == nullptr) {
-                        LOG("listen failed!!!");
-                    }
-                    tcp_accept(pcb, connected_callback_fun);
-                    // tcp_connect(pcb, ipaddr, port, connected_callback_fun);
+                    // tcp_pcb* result = tcp_listen(pcb);
+                    // if(result == nullptr) {
+                    //     LOG("listen failed!!!");
+                    // }
+                    // tcp_accept(pcb, connected_callback_fun);
+                    tcp_connect(pcb, ipaddr, port, connected_callback_fun);
                     iconnected = true;
                 }
                 return;
