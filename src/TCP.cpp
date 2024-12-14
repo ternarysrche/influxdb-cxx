@@ -30,8 +30,9 @@
 #include <string.h>
 #include "lwip.h"
 #include "lwip/tcp.h"
-#include "telemetry_m7.h"
+#include "telemetry_m4.h"
 #include "lwip/ip_addr.h"
+#include "lwip/apps/ping.h"
 extern struct netif gnetif;
 static bool connected = false;
 // static bool link_up = false;
@@ -59,14 +60,17 @@ namespace influxdb::transports
     TCP::TCP(const std::string& hostname, int port)
         // : mSocket(mIoService)
     {
+        (void)(hostname);
         // NEED TO REWRITE
         iconnected = false;
         this->port = port;
         LOG("constructor called with port %d", port);
-        pcb = tcp_new();
-        ipaddr_aton(hostname.c_str(), ipaddr);
-        LOG("ipaddr = %lx", ipaddr->addr);
-        tcp_bind(pcb, ipaddr, port); // WHAT'S THE PORT NUMBER
+        ping_init();
+        ping_send_now();
+        // pcb = tcp_new();
+        // ipaddr_aton(hostname.c_str(), ipaddr);
+        // LOG("ipaddr = %lx", ipaddr->addr);
+        // tcp_bind(pcb, ipaddr, port); // WHAT'S THE PORT NUMBER
         
         // ba::ip::tcp::resolver resolver(mIoService);
         // ba::ip::tcp::resolver::query query(hostname, std::to_string(port));

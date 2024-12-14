@@ -34,7 +34,7 @@
 #include "UriParser.h"
 #include "HTTP.h"
 #include "BoostSupport.h"
-#include "telemetry_m7.h"
+#include "telemetry_m4.h"
 namespace influxdb
 {
     namespace internal
