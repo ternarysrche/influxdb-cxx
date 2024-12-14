@@ -32,7 +32,7 @@
 #include "lwip/tcp.h"
 #include "telemetry_m4.h"
 #include "lwip/ip_addr.h"
-#include "lwip/apps/ping.h"
+// #include "lwip/apps/ping.h"
 extern struct netif gnetif;
 static bool connected = false;
 // static bool link_up = false;
@@ -65,12 +65,12 @@ namespace influxdb::transports
         iconnected = false;
         this->port = port;
         LOG("constructor called with port %d", port);
-        ping_init();
-        ping_send_now();
-        // pcb = tcp_new();
-        // ipaddr_aton(hostname.c_str(), ipaddr);
-        // LOG("ipaddr = %lx", ipaddr->addr);
-        // tcp_bind(pcb, ipaddr, port); // WHAT'S THE PORT NUMBER
+        // ping_init();
+        // ping_send_now();
+        pcb = tcp_new();
+        ipaddr_aton(hostname.c_str(), ipaddr);
+        LOG("ipaddr = %lx", ipaddr->addr);
+        tcp_bind(pcb, ipaddr, port); // WHAT'S THE PORT NUMBER
         
         // ba::ip::tcp::resolver resolver(mIoService);
         // ba::ip::tcp::resolver::query query(hostname, std::to_string(port));
