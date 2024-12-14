@@ -24,7 +24,7 @@
 /// \author Felix Moessbauer
 ///
 
-#include "TCP.h"
+#include "influx_tcp.h"
 #include "InfluxDB/InfluxDBException.h"
 #include <string>
 #include <string.h>

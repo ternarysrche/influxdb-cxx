@@ -23,7 +23,7 @@
 
 #include "BoostSupport.h"
 #include "UDP.h"
-#include "TCP.h"
+#include "influx_tcp.h"
 #include "UnixSocket.h"
 #include <chrono>
 #include <boost/lexical_cast.hpp>

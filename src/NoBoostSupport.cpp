@@ -23,7 +23,7 @@
 
 #include "BoostSupport.h"
 #include "InfluxDB/InfluxDBException.h"
-#include "TCP.h"
+#include "influx_tcp.h"
 
 namespace influxdb::internal
 {
