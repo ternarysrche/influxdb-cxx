@@ -27,8 +27,8 @@
 
 #include "InfluxDB/InfluxDB.h"
 #include "InfluxDB/InfluxDBException.h"
-#include "LineProtocol.h"
-#include "BoostSupport.h"
+#include "InfluxDB/LineProtocol.h"
+#include "InfluxDB/BoostSupport.h"
 #include <iostream>
 #include <memory>
 #include <string>
@@ -36,14 +36,14 @@
 namespace influxdb
 {
 
-    InfluxDB::InfluxDB(std::unique_ptr<Transport> transport)
+    InfluxDB::InfluxDB(std::unique_ptr<HTTP> http_)
         : mPointBatch{},
           mIsBatchingActivated{false},
           mBatchSize{0},
-          mTransport(std::move(transport)),
+          http(std::move(http_)),
           mGlobalTags{}
     {
-        if (mTransport == nullptr)
+        if (http == nullptr)
         {
             // throw InfluxDBException{"Transport must not be nullptr"};
             return;
@@ -105,8 +105,8 @@ namespace influxdb
     {
         // point = point;
         // return point;
-        if (mTransport){
-            mTransport->send(std::move(point));
+        if (http){
+            http->send(std::move(point));
             return "transport is not null";
         }
         else{
@@ -154,7 +154,7 @@ namespace influxdb
 
     std::string InfluxDB::execute(const std::string& cmd)
     {
-        return mTransport->execute(cmd);
+        return http->execute(cmd);
     }
 
     void InfluxDB::addPointToBatch(Point&& point)
@@ -169,12 +169,12 @@ namespace influxdb
 
     std::vector<Point> InfluxDB::query(const std::string& query)
     {
-        return internal::queryImpl(mTransport.get(), query);
+        return internal::queryImpl(http.get(), query);
     }
 
     void InfluxDB::createDatabaseIfNotExists()
     {
-        mTransport->createDatabase();
+        http->createDatabase();
     }
 
 } // namespace influxdb

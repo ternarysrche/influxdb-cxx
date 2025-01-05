@@ -28,37 +28,37 @@
 #ifndef INFLUXDATA_TRANSPORTS_HTTP_H
 #define INFLUXDATA_TRANSPORTS_HTTP_H
 
-#include "InfluxDB/Transport.h"
 #include <memory>
 #include <string>
 #include <chrono>
-// #include <cpr/cpr.h>
+#include "lwip.h"
+#include "http_client_.h"
 
-namespace influxdb::transports
+namespace influxdb
 {
 
     /// \brief HTTP transport
-    class HTTP : public Transport
+    class HTTP
     {
     public:
         /// Constructor
-        explicit HTTP(const std::string& url);
+        explicit HTTP(const std::string& url, uint16_t port);
 
         /// Sends point via HTTP POST
         ///  \throw InfluxDBException	when send fails
-        void send(std::string&& lineprotocol) override;
+        void send(std::string&& lineprotocol);
 
         /// Queries database
         /// \throw InfluxDBException	when query fails
-        std::string query(const std::string& query) override;
+        std::string query(const std::string& query);
 
         /// Execute command
         /// \throw InfluxDBException    when execution fails
-        std::string execute(const std::string& cmd) override;
+        std::string execute(const std::string& cmd);
 
         /// Creates database used at url if it does not exists
         /// \throw InfluxDBException	when HTTP POST fails
-        void createDatabase() override;
+        void createDatabase();
 
         /// Enable Basic Authentication
         /// \param user username
@@ -69,16 +69,13 @@ namespace influxdb::transports
         /// \param token API token
         void setAuthToken(const std::string& token);
 
-        /// Sets proxy
-        void setProxy(const Proxy& proxy) override;
-
-        void setVerifyCertificate(bool verify);
-        void setTimeout(std::chrono::milliseconds timeout);
-
     private:
         std::string endpointUrl;
         std::string databaseName;
-        // cpr::Session session;
+        httpc_request_info_t request_info;
+        httpc_connection_t connection_info;
+        ip_addr_t ipaddr;
+        uint16_t port;
     };
 
 } // namespace influxdb

@@ -1,6 +1,7 @@
 // MIT License
 //
 // Copyright (c) 2020-2024 offa
+// Copyright (c) 2019 Adam Wegrzynek
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -20,30 +21,16 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#include "InfluxDB/Proxy.h"
+#pragma once
 
-namespace influxdb
+#include "InfluxDB/HTTP.h"
+#include "InfluxDB/Point.h"
+#include "InfluxDB/UriParser.h"
+#include <memory>
+#include <string>
+#include <vector>
+
+namespace influxdb::internal
 {
-    Proxy::Proxy(const std::string& proxy, Proxy::Auth auth)
-        : proxy_(proxy),
-          auth_(auth)
-    {
-    }
-
-    Proxy::Proxy(const std::string& proxy)
-        : proxy_(proxy), auth_({})
-    {
-    }
-
-
-    const std::string& Proxy::getProxy() const
-    {
-        return proxy_;
-    }
-
-    std::optional<Proxy::Auth> Proxy::getAuthentication() const
-    {
-        return auth_;
-    }
-
+    std::vector<Point> queryImpl(HTTP* transport, const std::string& query);
 }
