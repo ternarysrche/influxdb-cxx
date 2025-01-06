@@ -37,6 +37,8 @@ void httpc_result_fn_(void *arg, httpc_result_t httpc_result, u32_t rx_content_l
     (void)(rx_content_len);
     (void)(srv_res);
     (void)(err);
+    // httpc_result
+    LOG("%d", httpc_result)
     LOG("result function called!");
 }
 
@@ -56,6 +58,9 @@ err_t altcp_recv_fn_(void *arg, struct tcp_pcb *tpcb, struct pbuf *p, err_t err)
     (void)(p);
     (void)(err);
     LOG("recv function called!");
+    LOG("HERE'S THE DATA:");
+    char* payload = (char*)p->payload;
+    LOG("%s", payload);
     return ERR_OK;
 }
 
@@ -98,7 +103,7 @@ namespace influxdb
             .request_type = HTTPC_POST,
             .application_type = HTTPC_JSON,
             .payload = nullptr,
-            .auth_token = nullptr
+            .auth_token = "zmdqB6ZNwPkTlPUktdFm47qBsD4fJjvgr7oIkSmylMt0sVqAYawL1CeZoMU0EggY2dofB4RwkieywPq25NOBTw=="
         }, connection_info {
             .proxy_addr = {.addr = 0},
             .proxy_port = 0,
@@ -134,7 +139,7 @@ namespace influxdb
     void HTTP::send(std::string&& lineprotocol)
     {
         std::string uri = "/write?db=" + databaseName;
-        request_info.payload = lineprotocol.c_str();
+        request_info.payload = ("{\"data\":\"" + lineprotocol +'"' + "}").c_str();
 
         httpc_post_file(&ipaddr, port, uri.c_str(), &request_info, &connection_info,
                     altcp_recv_fn_, nullptr, &connection_ptr);
