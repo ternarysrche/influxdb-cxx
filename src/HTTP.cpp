@@ -68,6 +68,12 @@ namespace influxdb
 {
     namespace
     {
+        std::string parseIPAddress(const std::string& url) {
+            const auto startPosition = url.find("//") + 2;
+            const auto endPosition = url.find(":", startPosition);
+            return url.substr(startPosition, endPosition - startPosition);
+        }
+
         std::string parseUrl(const std::string& url)
         {
             const auto questionMarkPosition = url.find('?');
@@ -113,7 +119,10 @@ namespace influxdb
         }, ipaddr {.addr = 0}, port(port_)
 
     {
-        ipaddr_aton(url.c_str(), &ipaddr);
+        LOG("the port is %d", port_);
+        std::string ip_string = parseIPAddress(url.c_str());
+        LOG("the ip string is %s", ip_string.c_str());
+        ipaddr_aton(ip_string.c_str(), &ipaddr);
     }
 
     std::string HTTP::query(const std::string& query)
@@ -138,9 +147,12 @@ namespace influxdb
 
     void HTTP::send(std::string&& lineprotocol)
     {
+        (void)(lineprotocol);
+        LOG("send called");
         std::string uri = "/write?db=" + databaseName;
-        request_info.payload = ("{\"data\":\"" + lineprotocol +'"' + "}").c_str();
-
+        request_info.payload = lineprotocol.c_str();
+        // request_info.payload = ("weather,location=us-midwest temperature=82 1465839830100400200");
+        LOG("ip: %lu", ipaddr.addr);
         httpc_post_file(&ipaddr, port, uri.c_str(), &request_info, &connection_info,
                     altcp_recv_fn_, nullptr, &connection_ptr);
     }
