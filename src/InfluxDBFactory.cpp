@@ -31,17 +31,19 @@
 #include <memory>
 #include <map>
 #include "InfluxDB/InfluxDBException.h"
-#include "UriParser.h"
-#include "HTTP.h"
-#include "BoostSupport.h"
-
+#include "InfluxDB/UriParser.h"
+#include "InfluxDB/HTTP.h"
+#include "InfluxDB/BoostSupport.h"
+#include "telemetry_m4.h"
 namespace influxdb
 {
     namespace internal
     {
-        std::unique_ptr<Transport> withHttpTransport(const http::url& uri)
+        std::unique_ptr<HTTP> withHttpTransport(const std::string& url)
         {
-            auto transport = std::make_unique<transports::HTTP>(uri.url);
+            auto urlCopy = url;
+            http::url uri = http::ParseHttpUrl(urlCopy);
+            auto transport = std::make_unique<HTTP>(uri.url, uri.port);
             if (!uri.user.empty() && !uri.password.empty())
             {
                 transport->setBasicAuthentication(uri.user, uri.password);
@@ -55,44 +57,9 @@ namespace influxdb
 
     }
 
-    std::unique_ptr<Transport> InfluxDBFactory::GetTransport(const std::string& url)
-    {
-        static const std::map<std::string, std::function<std::unique_ptr<Transport>(const http::url&)>> map = {
-            // {"udp", internal::withUdpTransport},
-            {"tcp", internal::withTcpTransport},
-            // {"http", internal::withHttpTransport},
-            // {"https", internal::withHttpTransport},
-            // {"unix", internal::withUnixSocketTransport},
-        };
-
-        auto urlCopy = url;
-        http::url parsedUrl = http::ParseHttpUrl(urlCopy);
-        if (parsedUrl.protocol.empty())
-        {
-            // throw InfluxDBException("Ill-formed URI");
-            return nullptr;
-        }
-
-        const auto iterator = map.find(parsedUrl.protocol);
-        if (iterator == map.end())
-        {
-            return nullptr;
-            // throw InfluxDBException("Unrecognized backend " + parsedUrl.protocol);
-        }
-
-        return iterator->second(parsedUrl);
-    }
-
     std::unique_ptr<InfluxDB> InfluxDBFactory::Get(const std::string& url)
     {
-        return std::make_unique<InfluxDB>(InfluxDBFactory::GetTransport(url));
-    }
-
-    std::unique_ptr<InfluxDB> InfluxDBFactory::Get(const std::string& url, const Proxy& proxy)
-    {
-        auto transport = InfluxDBFactory::GetTransport(url);
-        transport->setProxy(proxy);
-        return std::make_unique<InfluxDB>(std::move(transport));
+        return std::make_unique<InfluxDB>(internal::withHttpTransport(url));
     }
 
 } // namespace influxdb

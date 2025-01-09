@@ -34,7 +34,7 @@
 #include <vector>
 #include <deque>
 
-#include "InfluxDB/Transport.h"
+#include "InfluxDB/HTTP.h"
 #include "InfluxDB/Point.h"
 #include "InfluxDB/influxdb_export.h"
 
@@ -51,7 +51,7 @@ namespace influxdb
         InfluxDB(const InfluxDB&) = delete;
 
         /// Constructor required valid transport
-        explicit InfluxDB(std::unique_ptr<Transport> transport);
+        explicit InfluxDB(std::unique_ptr<HTTP> http);
 
         /// Writes a point
         /// \param point
@@ -102,7 +102,7 @@ namespace influxdb
         std::size_t mBatchSize;
 
         /// Underlying transport UDP/HTTP/Unix socket
-        std::unique_ptr<Transport> mTransport;
+        std::unique_ptr<HTTP> http;
 
         /// Transmits string over transport
         std::string transmit(std::string&& point);
