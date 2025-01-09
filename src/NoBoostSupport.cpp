@@ -38,10 +38,9 @@ namespace influxdb::internal
         // throw InfluxDBException("UDP transport requires Boost");
     }
 
-    std::unique_ptr<Transport> withTcpTransport([[maybe_unused]] const http::url& uri)
+    std::unique_ptr<Transport> withTcpTransport(const http::url& uri)
     {
-        return {};
-        // throw InfluxDBException("TCP transport requires Boost");
+        return std::make_unique<transports::TCP>(uri.host, uri.port);
     }
 
     std::unique_ptr<Transport> withUnixSocketTransport([[maybe_unused]] const http::url& uri)
