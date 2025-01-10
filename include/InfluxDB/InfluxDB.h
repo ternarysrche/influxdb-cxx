@@ -88,6 +88,7 @@ namespace influxdb
         /// Executes a command and returns it's response.
         /// \param cmd
         std::string execute(const std::string& cmd);
+        void setAuthToken(const std::string& token);
 
     private:
         void addPointToBatch(Point&& point);
@@ -101,7 +102,7 @@ namespace influxdb
         /// Points batch size
         std::size_t mBatchSize;
 
-        /// Underlying transport UDP/HTTP/Unix socket
+        /// Underlying transport HTTP
         std::unique_ptr<HTTP> http;
 
         /// Transmits string over transport

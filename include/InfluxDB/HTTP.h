@@ -60,11 +60,6 @@ namespace influxdb
         /// \throw InfluxDBException	when HTTP POST fails
         void createDatabase();
 
-        /// Enable Basic Authentication
-        /// \param user username
-        /// \param pass password
-        void setBasicAuthentication(const std::string& user, const std::string& pass);
-
         /// Sets the API token for authentication
         /// \param token API token
         void setAuthToken(const std::string& token);
@@ -76,6 +71,8 @@ namespace influxdb
         httpc_connection_t connection_info;
         ip_addr_t ipaddr;
         uint16_t port;
+        std::string write_uri;
+        std::string query_base_uri;
     };
 
 } // namespace influxdb

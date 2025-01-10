@@ -43,16 +43,12 @@ namespace influxdb
         {
             auto urlCopy = url;
             http::url uri = http::ParseHttpUrl(urlCopy);
-            auto transport = std::make_unique<HTTP>(uri.url, uri.port);
-            if (!uri.user.empty() && !uri.password.empty())
+            auto http_ = std::make_unique<HTTP>(uri.url, uri.port);
+            if (!uri.password.empty())
             {
-                transport->setBasicAuthentication(uri.user, uri.password);
+                http_->setAuthToken(uri.password);
             }
-            else if (!uri.password.empty())
-            {
-                transport->setAuthToken(uri.password);
-            }
-            return transport;
+            return http_;
         }
 
     }

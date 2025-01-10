@@ -177,4 +177,8 @@ namespace influxdb
         http->createDatabase();
     }
 
+    void InfluxDB::setAuthToken(const std::string& token)
+    {
+        http->setAuthToken(token);
+    }
 } // namespace influxdb

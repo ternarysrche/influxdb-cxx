@@ -48,7 +48,6 @@ err_t httpc_headers_done_fn_(httpc_state_t *connection, void *arg, struct pbuf *
     (void)(hdr);
     (void)(hdr_len);
     (void)(content_len);
-    LOG("headers done function called!");
     return ERR_OK;
 }
 
@@ -57,10 +56,13 @@ err_t altcp_recv_fn_(void *arg, struct tcp_pcb *tpcb, struct pbuf *p, err_t err)
     (void)(tpcb);
     (void)(p);
     (void)(err);
-    LOG("recv function called!");
-    LOG("HERE'S THE DATA:");
     char* payload = (char*)p->payload;
+    char tmp = payload[(p->len)-1];
+    payload[(p->len)-1] = 0;
+    // if (AN ERROR OCCURED ACCORDING TO PAYLOAD)
+    LOG("RES:");
     LOG("%s", payload);
+    payload[(p->len)-1] = tmp;
     return ERR_OK;
 }
 
@@ -95,7 +97,7 @@ namespace influxdb
 
             if (dbParameterPosition == std::string::npos)
             {
-                // throw InfluxDBException{"No Database specified"};
+                LOG("No Database specified");
                 return "";
             }
             return url.substr(dbParameterPosition + 4);
@@ -109,50 +111,39 @@ namespace influxdb
             .request_type = HTTPC_POST,
             .application_type = HTTPC_JSON,
             .payload = nullptr,
-            .auth_token = "zmdqB6ZNwPkTlPUktdFm47qBsD4fJjvgr7oIkSmylMt0sVqAYawL1CeZoMU0EggY2dofB4RwkieywPq25NOBTw=="
+            .auth_token = nullptr
         }, connection_info {
             .proxy_addr = {.addr = 0},
             .proxy_port = 0,
             .use_proxy = false,
             .result_fn = httpc_result_fn_,
             .headers_done_fn = httpc_headers_done_fn_
-        }, ipaddr {.addr = 0}, port(port_)
+        }, ipaddr {.addr = 0}, port(port_), write_uri("/write?db=" + databaseName), query_base_uri("/query?db=" + databaseName)
 
     {
-        LOG("the port is %d", port_);
         std::string ip_string = parseIPAddress(url.c_str());
-        LOG("the ip string is %s", ip_string.c_str());
         ipaddr_aton(ip_string.c_str(), &ipaddr);
     }
 
     std::string HTTP::query(const std::string& query)
     {
-        std::string uri = "/query?db=" + databaseName + "&q=" + query;
-        httpc_get_file(&ipaddr, port, uri.c_str(), &connection_info, altcp_recv_fn_, nullptr, &connection_ptr);
+        std::string query_uri = query_base_uri + "&q=" + query;
+        httpc_get_file(&ipaddr, port, query_uri.c_str(), &connection_info, altcp_recv_fn_, nullptr, &connection_ptr);
         return "";
-    }
-
-    void HTTP::setBasicAuthentication(const std::string& user, const std::string& pass)
-    {
-        (void)(user);
-        (void)(pass);
-        // session.SetAuth(cpr::Authentication{user, pass, cpr::AuthMode::BASIC});
     }
 
     void HTTP::setAuthToken(const std::string& token)
     {
-        (void)(token);
-        // session.UpdateHeader(cpr::Header{{"Authorization", "Token " + token}});
+        request_info.auth_token = token.c_str();
     }
 
     void HTTP::send(std::string&& lineprotocol)
     {
-        (void)(lineprotocol);
-        LOG("send called");
+        if (request_info.auth_token){
+
+        }
         std::string uri = "/write?db=" + databaseName;
         request_info.payload = lineprotocol.c_str();
-        // request_info.payload = ("weather,location=us-midwest temperature=82 1465839830100400200");
-        LOG("ip: %lu", ipaddr.addr);
         httpc_post_file(&ipaddr, port, uri.c_str(), &request_info, &connection_info,
                     altcp_recv_fn_, nullptr, &connection_ptr);
     }
