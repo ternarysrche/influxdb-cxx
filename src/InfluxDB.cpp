@@ -75,6 +75,8 @@ namespace influxdb
         }
     }
 
+
+
     std::string InfluxDB::joinLineProtocolBatch() const
     {
         std::string joinedBatch;

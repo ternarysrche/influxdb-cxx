@@ -58,4 +58,16 @@ namespace influxdb
         return std::make_unique<InfluxDB>(internal::withHttpTransport(url));
     }
 
+    std::unique_ptr<HTTP> InfluxDBFactory::withHttpTransport(const std::string& url)
+    {
+        auto urlCopy = url;
+        http::url uri = http::ParseHttpUrl(urlCopy);
+        auto http_ = std::make_unique<HTTP>(uri.url, uri.port);
+        if (!uri.password.empty())
+        {
+            http_->setAuthToken(uri.password);
+        }
+        return http_;
+    }
+
 } // namespace influxdb

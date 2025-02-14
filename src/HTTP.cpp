@@ -31,38 +31,41 @@
 
 httpc_state_t* connection_ptr = nullptr;
 
-void httpc_result_fn_(void *arg, httpc_result_t httpc_result, u32_t rx_content_len, u32_t srv_res, err_t err) {
-    (void)(arg);
-    (void)(httpc_result);
-    (void)(rx_content_len);
-    (void)(srv_res);
-    (void)(err);
+void httpc_result_fn_(void* arg, httpc_result_t httpc_result, u32_t rx_content_len, u32_t srv_res, err_t err)
+{
+    (void) (arg);
+    (void) (httpc_result);
+    (void) (rx_content_len);
+    (void) (srv_res);
+    (void) (err);
     // httpc_result
+    LOG("Received HTTP response: ");
     LOG("%d", httpc_result)
     LOG("result function called!");
 }
 
-err_t httpc_headers_done_fn_(httpc_state_t *connection, void *arg, struct pbuf *hdr, u16_t hdr_len, u32_t content_len) {
-    (void)(connection);
-    (void)(arg);
-    (void)(hdr);
-    (void)(hdr_len);
-    (void)(content_len);
+err_t httpc_headers_done_fn_(httpc_state_t* connection, void* arg, struct pbuf* hdr, u16_t hdr_len, u32_t content_len)
+{
+    (void) (connection);
+    (void) (arg);
+    (void) (hdr);
+    (void) (hdr_len);
+    (void) (content_len);
     return ERR_OK;
 }
 
-err_t altcp_recv_fn_(void *arg, struct tcp_pcb *tpcb, struct pbuf *p, err_t err) {
-    (void)(arg);
-    (void)(tpcb);
-    (void)(p);
-    (void)(err);
-    char* payload = (char*)p->payload;
-    char tmp = payload[(p->len)-1];
-    payload[(p->len)-1] = 0;
+err_t altcp_recv_fn_(void* arg, struct tcp_pcb* tpcb, struct pbuf* p, err_t err)
+{
+    (void) (arg);
+    (void) (tpcb);
+    (void) (p);
+    (void) (err);
+    char* payload = (char*) p->payload;
+    char tmp = payload[(p->len) - 1];
+    payload[(p->len) - 1] = 0;
     // if (AN ERROR OCCURED ACCORDING TO PAYLOAD)
-    LOG("RES:");
-    LOG("%s", payload);
-    payload[(p->len)-1] = tmp;
+    LOG("RES: %s", payload);
+    payload[(p->len) - 1] = tmp;
     return ERR_OK;
 }
 
@@ -70,7 +73,8 @@ namespace influxdb
 {
     namespace
     {
-        std::string parseIPAddress(const std::string& url) {
+        std::string parseIPAddress(const std::string& url)
+        {
             const auto startPosition = url.find("//") + 2;
             const auto endPosition = url.find(":", startPosition);
             return url.substr(startPosition, endPosition - startPosition);
@@ -107,21 +111,22 @@ namespace influxdb
 
     HTTP::HTTP(const std::string& url, uint16_t port_)
         : endpointUrl(parseUrl(url)), databaseName(parseDatabaseName(url)),
-        request_info{
-            .request_type = HTTPC_POST,
-            .application_type = HTTPC_JSON,
-            .payload = nullptr,
-            .auth_token = nullptr
-        }, connection_info {
-            .proxy_addr = {.addr = 0},
-            .proxy_port = 0,
-            .use_proxy = false,
-            .result_fn = httpc_result_fn_,
-            .headers_done_fn = httpc_headers_done_fn_
-        }, ipaddr {.addr = 0}, port(port_), write_uri("/write?db=" + databaseName), query_base_uri("/query?db=" + databaseName)
+          request_info{
+              .request_type = HTTPC_POST,
+              .application_type = HTTPC_JSON,
+              .payload = nullptr,
+              .auth_token = "HERE"},
+          connection_info{
+              .proxy_addr = {.addr = 0},
+              .proxy_port = 0,
+              .use_proxy = false,
+              .result_fn = httpc_result_fn_,
+              .headers_done_fn = httpc_headers_done_fn_},
+          ipaddr{.addr = 0}, port(port_), write_uri("/write?db=" + databaseName), query_base_uri("/query?db=" + databaseName)
 
     {
         std::string ip_string = parseIPAddress(url.c_str());
+        LOG("IP address: %s", ip_string.c_str());
         ipaddr_aton(ip_string.c_str(), &ipaddr);
     }
 
@@ -139,13 +144,15 @@ namespace influxdb
 
     void HTTP::send(std::string&& lineprotocol)
     {
-        if (request_info.auth_token){
-
+        if (request_info.auth_token == nullptr)
+        {
+            LOG("No authentication token set!");
         }
         std::string uri = "/write?db=" + databaseName;
         request_info.payload = lineprotocol.c_str();
+        LOG("Sending over payload.");
         httpc_post_file(&ipaddr, port, uri.c_str(), &request_info, &connection_info,
-                    altcp_recv_fn_, nullptr, &connection_ptr);
+                        altcp_recv_fn_, nullptr, &connection_ptr);
     }
 
 
@@ -158,7 +165,7 @@ namespace influxdb
     {
         std::string uri = "/query?q=CREATE DATABASE " + databaseName;
         httpc_post_file(&ipaddr, port, uri.c_str(), &request_info, &connection_info,
-                    altcp_recv_fn_, nullptr, &connection_ptr);
+                        altcp_recv_fn_, nullptr, &connection_ptr);
     }
 
 } // namespace influxdb
