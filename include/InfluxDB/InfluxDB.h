@@ -61,6 +61,8 @@ namespace influxdb
         /// \param point
         void write(std::vector<Point>&& points);
 
+        void write(const Point **points, uint16_t *valid_indices, uint16_t num_valid_indices);
+
         /// Queries InfluxDB database
         std::vector<Point> query(const std::string& query);
 

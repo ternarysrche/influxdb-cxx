@@ -52,7 +52,7 @@ namespace influxdb
         Point&& addTag(std::string_view key, std::string_view value);
 
         /// Adds field
-        using FieldValue = std::variant<int, long long int, std::string, double, bool, unsigned int, unsigned long long int>;
+        using FieldValue = std::variant<int, long long int, unsigned long int, long int, std::string, double, bool, unsigned int, unsigned long long int>;
         Point&& addField(std::string_view name, const FieldValue& value);
 
         /// Sets custom timestamp

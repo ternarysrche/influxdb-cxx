@@ -150,7 +150,7 @@ namespace influxdb
         }
         std::string uri = "/write?db=" + databaseName;
         request_info.payload = lineprotocol.c_str();
-        LOG("Sending over payload.");
+        LOG("Sending HTTP request. lineproc: %s", lineprotocol.c_str());
         httpc_post_file(&ipaddr, port, uri.c_str(), &request_info, &connection_info,
                         altcp_recv_fn_, nullptr, &connection_ptr);
     }

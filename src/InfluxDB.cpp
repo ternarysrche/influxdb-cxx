@@ -32,6 +32,8 @@
 #include <iostream>
 #include <memory>
 #include <string>
+#include "InfluxDB.h"
+#include <telemetry_m4.h>
 
 namespace influxdb
 {
@@ -76,7 +78,6 @@ namespace influxdb
     }
 
 
-
     std::string InfluxDB::joinLineProtocolBatch() const
     {
         std::string joinedBatch;
@@ -107,11 +108,13 @@ namespace influxdb
     {
         // point = point;
         // return point;
-        if (http){
+        if (http)
+        {
             http->send(std::move(point));
             return "transport is not null";
         }
-        else{
+        else
+        {
             return "transport is null";
         }
     }
@@ -152,6 +155,20 @@ namespace influxdb
             lineProtocol.erase(std::prev(lineProtocol.end()));
             transmit(std::move(lineProtocol));
         }
+    }
+
+
+    void InfluxDB::write(const Point** points, uint16_t* valid_indices, uint16_t num_valid_indices)
+    {
+        std::string lineProtocol;
+        LineProtocol formatter{mGlobalTags};
+
+        for (uint16_t i = 0; i < num_valid_indices; i++)
+        {
+            lineProtocol += formatter.format(*points[valid_indices[i]]) + "\n";
+        }
+        lineProtocol.erase(std::prev(lineProtocol.end()));
+        transmit(std::move(lineProtocol));
     }
 
     std::string InfluxDB::execute(const std::string& cmd)

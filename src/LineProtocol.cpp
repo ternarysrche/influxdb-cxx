@@ -106,6 +106,8 @@ namespace influxdb
                 std::visit(overloaded{
                                [&convert](int v)
                                { convert << v << 'i'; },
+                               [&convert](long int v)
+                               { convert << v << 'i'; },
                                [&convert](long long int v)
                                { convert << v << 'i'; },
                                [&convert](double v)
@@ -115,6 +117,8 @@ namespace influxdb
                                [&convert](bool v)
                                { convert << (v ? "true" : "false"); },
                                [&convert](unsigned int v)
+                               { convert << v << 'u'; },
+                               [&convert](unsigned long int v)
                                { convert << v << 'u'; },
                                [&convert](unsigned long long int v)
                                { convert << v << 'u'; },
