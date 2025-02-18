@@ -48,6 +48,15 @@ namespace influxdb
         /// Constructs point based on measurement name
         explicit Point(const std::string& measurement);
 
+        // Copy constructor
+        Point(const Point& other)
+            : mMeasurement(other.mMeasurement),
+            mTimestamp(other.mTimestamp),
+            mTags(other.mTags),
+            mFields(other.mFields)
+        {
+        }
+
         /// Adds a tags
         Point&& addTag(std::string_view key, std::string_view value);
 

@@ -110,7 +110,7 @@ namespace influxdb
         // return point;
         if (http)
         {
-            LOG("HTTP Sending...")
+            LOG("HTTP Sending: %s", point.c_str());
             http->send(std::move(point));
             return "transport is not null";
         }
@@ -168,6 +168,11 @@ namespace influxdb
         for (uint16_t i = 0; i < num_valid_indices; i++)
         {
             LOG("loop %d:", i);
+            LOG("point name: %s", points[valid_indices[i]]->getName().c_str());
+            // LOG("point timestamp: %ld", points[valid_indices[i]]->getTimestamp().time_since_epoch().count());
+            LOG("point fields: %s", points[valid_indices[i]]->getFields().c_str());
+            LOG("point tags: %s", points[valid_indices[i]]->getTags().c_str());
+            LOG("timestamp: %lld", std::chrono::duration_cast<std::chrono::nanoseconds>(points[valid_indices[i]]->getTimestamp().time_since_epoch()).count());
             lineProtocol += formatter.format(*points[valid_indices[i]]) + "\n";
         }
         LOG("loop done...");
