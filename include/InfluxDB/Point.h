@@ -50,18 +50,27 @@ namespace influxdb
 
         Point();
 
+        // Copy constructor
+        Point(const Point& other)
+            : mMeasurement(other.mMeasurement),
+              mTimestamp(other.mTimestamp),
+              mTags(other.mTags),
+              mFields(other.mFields)
+        {
+        }
+
         /// Adds a tags
         void addTag(std::string_view key, std::string_view value);
 
         /// Adds field
         using FieldValue = std::variant<int, long long int, unsigned long int, long int, std::string, double, bool, unsigned int, unsigned long long int>;
 
-        void addField(std::string_view name, const FieldValue &value);
+        void addField(std::string_view name, const FieldValue& value);
 
         /// Sets custom timestamp
         void setTimestamp(std::chrono::time_point<std::chrono::system_clock> timestamp);
 
-        void setMeasurement(const std::string &measurement);
+        void setMeasurement(const std::string& measurement);
 
         /// Name getter
         std::string getName() const;

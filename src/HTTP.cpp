@@ -115,7 +115,7 @@ namespace influxdb
               .request_type = HTTPC_POST,
               .application_type = HTTPC_JSON,
               .payload = nullptr,
-              .auth_token = "HERE"},
+              .auth_token = "zmdqB6ZNwPkTlPUktdFm47qBsD4fJjvgr7oIkSmylMt0sVqAYawL1CeZoMU0EggY2dofB4RwkieywPq25NOBTw=="},
           connection_info{
               .proxy_addr = {.addr = 0},
               .proxy_port = 0,
