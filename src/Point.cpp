@@ -26,6 +26,11 @@
 ///
 
 #include "InfluxDB/Point.h"
+
+#include <BoostSupport.h>
+#include <BoostSupport.h>
+#include <BoostSupport.h>
+#include <BoostSupport.h>
 #include <chrono>
 #include <memory>
 #include <sstream>
@@ -49,32 +54,38 @@ namespace influxdb
     {
     }
 
-    Point&& Point::addField(std::string_view name, const Point::FieldValue& value)
+    Point::Point()
+        : mMeasurement("null"), mTimestamp(std::chrono::system_clock::now()), mTags({}), mFields({})
+    {
+    }
+
+    void Point::addField(std::string_view name, const Point::FieldValue &value)
     {
         if (name.empty())
         {
-            return std::move(*this);
+            return;
         }
-
         mFields.emplace_back(std::make_pair(name, value));
-        return std::move(*this);
     }
 
-    Point&& Point::addTag(std::string_view key, std::string_view value)
+    void Point::addTag(std::string_view key, std::string_view value)
     {
         if (key.empty() || value.empty())
         {
-            return std::move(*this);
+            return;
         }
 
         mTags.emplace_back(std::make_pair(key, value));
-        return std::move(*this);
     }
 
-    Point&& Point::setTimestamp(std::chrono::time_point<std::chrono::system_clock> timestamp)
+    void Point::setTimestamp(std::chrono::time_point<std::chrono::system_clock> timestamp)
     {
         mTimestamp = timestamp;
-        return std::move(*this);
+    }
+
+    void Point::setMeasurement(const std::string& measurement)
+    {
+        mMeasurement = measurement;
     }
 
     std::string Point::getName() const
