@@ -159,7 +159,7 @@ namespace influxdb
     }
 
 
-    void InfluxDB::write(const Point** points, uint16_t* valid_indices, uint16_t num_valid_indices)
+    void InfluxDB::write(Point** const points, uint16_t* valid_indices, uint16_t num_valid_indices)
     {
         LOG("inside write function...");
         std::string lineProtocol;
