@@ -125,8 +125,9 @@ namespace influxdb
           ipaddr{.addr = 0}, port(port_), write_uri("/write?db=" + databaseName), query_base_uri("/query?db=" + databaseName)
 
     {
-        std::string ip_string = parseIPAddress(url.c_str());
+        std::string ip_string = parseIPAddress(url);
         LOG("IP address: %s", ip_string.c_str());
+        LOG("URL: %s", url.c_str());
         ipaddr_aton(ip_string.c_str(), &ipaddr);
     }
 
@@ -150,7 +151,6 @@ namespace influxdb
         }
         std::string uri = "/write?db=" + databaseName;
         request_info.payload = lineprotocol.c_str();
-        LOG("Sending HTTP request. lineproc: %s", lineprotocol.c_str());
         httpc_post_file(&ipaddr, port, uri.c_str(), &request_info, &connection_info,
                         altcp_recv_fn_, nullptr, &connection_ptr);
     }

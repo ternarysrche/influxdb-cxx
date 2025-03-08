@@ -110,7 +110,6 @@ namespace influxdb
         // return point;
         if (http)
         {
-            LOG("HTTP Sending: %s", point.c_str());
             http->send(std::move(point));
             return "transport is not null";
         }

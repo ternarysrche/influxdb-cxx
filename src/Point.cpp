@@ -28,13 +28,10 @@
 #include "InfluxDB/Point.h"
 
 #include <BoostSupport.h>
-#include <BoostSupport.h>
-#include <BoostSupport.h>
-#include <BoostSupport.h>
 #include <chrono>
-#include <memory>
 #include <sstream>
 #include <iomanip>
+#include <utility>
 
 namespace influxdb
 {
@@ -49,8 +46,8 @@ namespace influxdb
         overloaded(Ts...) -> overloaded<Ts...>;
     }
 
-    Point::Point(const std::string& measurement)
-        : mMeasurement(measurement), mTimestamp(std::chrono::system_clock::now()), mTags({}), mFields({})
+    Point::Point(std::string  measurement)
+        : mMeasurement(std::move(measurement)), mTimestamp(std::chrono::system_clock::now()), mTags({}), mFields({})
     {
     }
 
@@ -59,7 +56,7 @@ namespace influxdb
     {
     }
 
-    void Point::addField(std::string_view name, const Point::FieldValue &value)
+    void Point::addField(std::string_view name, const Point::FieldValue& value)
     {
         if (name.empty())
         {
@@ -83,9 +80,9 @@ namespace influxdb
         mTimestamp = timestamp;
     }
 
-    void Point::setMeasurement(const std::string& measurement)
+    void Point::setMeasurement(std::string  measurement)
     {
-        mMeasurement = measurement;
+        mMeasurement = std::move(measurement);
     }
 
     std::string Point::getName() const

@@ -46,7 +46,7 @@ namespace influxdb
     {
     public:
         /// Constructs point based on measurement name
-        explicit Point(const std::string& measurement);
+        explicit Point(std::string   measurement);
 
         Point();
 
@@ -70,7 +70,7 @@ namespace influxdb
         /// Sets custom timestamp
         void setTimestamp(std::chrono::time_point<std::chrono::system_clock> timestamp);
 
-        void setMeasurement(const std::string& measurement);
+        void setMeasurement(std::string measurement);
 
         /// Name getter
         std::string getName() const;
