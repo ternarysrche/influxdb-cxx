@@ -39,9 +39,12 @@ void httpc_result_fn_(void* arg, httpc_result_t httpc_result, u32_t rx_content_l
     (void) (srv_res);
     (void) (err);
     // httpc_result
-    LOG("Received HTTP response: ");
+    if(httpc_result != 0) {
+        LOG("Received HTTP response: ");
     LOG("%d", httpc_result)
     LOG("result function called!");
+    }
+    
 }
 
 err_t httpc_headers_done_fn_(httpc_state_t* connection, void* arg, struct pbuf* hdr, u16_t hdr_len, u32_t content_len)

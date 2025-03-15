@@ -33,6 +33,7 @@
 #include <chrono>
 #include <variant>
 #include <deque>
+#include <vector>
 
 #include "InfluxDB/influxdb_export.h"
 
@@ -59,13 +60,9 @@ namespace influxdb
         {
         }
 
-
-        Point& operator =(const Point& other ) {
-            this->mMeasurement = other.mMeasurement;
-            this->mTimestamp = other.mTimestamp;
-            this->mTags = other.mTags;
-            this->mFields = other.mFields;
-            return *this;
+        void clear() {
+            this->mTags.clear();
+            this->mFields.clear();
         }
 
         /// Adds a tags
@@ -91,14 +88,14 @@ namespace influxdb
         std::string getFields() const;
 
         /// Get Field Set
-        using FieldSet = std::deque<std::pair<std::string, FieldValue>>;
+        using FieldSet = std::vector<std::pair<std::string, FieldValue>>;
         const FieldSet& getFieldSet() const;
 
         /// Tags getter
         std::string getTags() const;
 
         /// Get Tag Set
-        using TagSet = std::deque<std::pair<std::string, std::string>>;
+        using TagSet = std::vector<std::pair<std::string, std::string>>;
         const TagSet& getTagSet() const;
 
         /// Precision for float fields
