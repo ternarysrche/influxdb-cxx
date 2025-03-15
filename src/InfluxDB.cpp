@@ -163,14 +163,14 @@ namespace influxdb
         std::string lineProtocol;
         const LineProtocol formatter{mGlobalTags};
         // LOG("looping");
-        // LOG("message has %u valid indices", num_valid_indices);
+        LOG("message has %u valid indices", num_valid_indices);
         for (uint16_t i = 0; i < num_valid_indices; i++)
         {
             // LOG("loop %d:", i);
-            // LOG("valid index %d", valid_indices[i]);
-            // LOG("%s", points[valid_indices[i]].getName().c_str());
-            // LOG("%u", points[valid_indices[i]].getFields().size());
-            // LOG("%s, %llu", points[valid_indices[i]].getFields().c_str(), points[valid_indices[i]].getTimestamp().time_since_epoch().count());
+            LOG("valid index %d", valid_indices[i]);
+            LOG("%s", points[valid_indices[i]].getName().c_str());
+            LOG("%u", points[valid_indices[i]].getFields().size());
+            LOG("%s, %llu", points[valid_indices[i]].getFields().c_str(), points[valid_indices[i]].getTimestamp().time_since_epoch().count());
             lineProtocol += formatter.format(points[valid_indices[i]]) + "\n";
         }
         // LOG("loop done...");
