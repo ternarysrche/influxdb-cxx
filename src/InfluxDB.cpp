@@ -166,6 +166,10 @@ namespace influxdb
         for (uint16_t i = 0; i < num_valid_indices; i++)
         {
             LOG("loop %d:", i);
+            LOG("valid index %d", valid_indices[i]);
+            LOG("%s", points[valid_indices[i]].getName().c_str());
+            LOG("%s", points[valid_indices[i]].getFields().c_str());
+            LOG("%llu", points[valid_indices[i]].getTimestamp().time_since_epoch().count());
             lineProtocol += formatter.format(points[valid_indices[i]]) + "\n";
         }
         LOG("loop done...");

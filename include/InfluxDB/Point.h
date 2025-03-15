@@ -59,6 +59,15 @@ namespace influxdb
         {
         }
 
+
+        Point& operator =(const Point& other ) {
+            this->mMeasurement = other.mMeasurement;
+            this->mTimestamp = other.mTimestamp;
+            this->mTags = other.mTags;
+            this->mFields = other.mFields;
+            return *this;
+        }
+
         /// Adds a tags
         void addTag(std::string_view key, std::string_view value);
 

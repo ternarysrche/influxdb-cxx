@@ -56,6 +56,7 @@ namespace influxdb
     {
     }
 
+
     void Point::addField(std::string_view name, const Point::FieldValue& value)
     {
         if (name.empty())
