@@ -157,23 +157,16 @@ namespace influxdb
         }
     }
 
-
-    void InfluxDB::write(Point** points, uint16_t* valid_indices, uint16_t num_valid_indices)
+    void InfluxDB::write(const Point* points, const uint16_t* valid_indices, const uint16_t num_valid_indices)
     {
         LOG("inside write function...");
         std::string lineProtocol;
-        LineProtocol formatter{mGlobalTags};
+        const LineProtocol formatter{mGlobalTags};
         LOG("looping");
         for (uint16_t i = 0; i < num_valid_indices; i++)
         {
-            LOG("point addr: %p", points[valid_indices[i]]);
             LOG("loop %d:", i);
-            LOG("point name: %s", points[valid_indices[i]]->getName().c_str());
-            // LOG("point timestamp: %lld", points[valid_indices[i]]->getTimestamp().time_since_epoch().count());
-            LOG("point fields: %s", points[valid_indices[i]]->getFields().c_str());
-            LOG("point tags: %s", points[valid_indices[i]]->getTags().c_str());
-            LOG("timestamp: %lld", std::chrono::duration_cast<std::chrono::nanoseconds>(points[valid_indices[i]]->getTimestamp().time_since_epoch()).count());
-            lineProtocol += formatter.format(*points[valid_indices[i]]) + "\n";
+            lineProtocol += formatter.format(points[valid_indices[i]]) + "\n";
         }
         LOG("loop done...");
         lineProtocol.erase(std::prev(lineProtocol.end()));

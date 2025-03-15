@@ -58,7 +58,6 @@ err_t altcp_recv_fn_(void* arg, struct tcp_pcb* tpcb, struct pbuf* p, err_t err)
 {
     (void) (arg);
     (void) (tpcb);
-    (void) (p);
     (void) (err);
     char* payload = (char*) p->payload;
     char tmp = payload[(p->len) - 1];
@@ -66,6 +65,7 @@ err_t altcp_recv_fn_(void* arg, struct tcp_pcb* tpcb, struct pbuf* p, err_t err)
     // if (AN ERROR OCCURED ACCORDING TO PAYLOAD)
     LOG("RES: %s", payload);
     payload[(p->len) - 1] = tmp;
+    pbuf_free(p);
     return ERR_OK;
 }
 
