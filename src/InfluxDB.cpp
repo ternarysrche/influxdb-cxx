@@ -173,9 +173,9 @@ namespace influxdb
             LOG("%s, %llu", points[valid_indices[i]].getFields().c_str(), points[valid_indices[i]].getTimestamp().time_since_epoch().count());
             lineProtocol += formatter.format(points[valid_indices[i]]) + "\n";
         }
-        // LOG("loop done...");
+        LOG("loop done...");
         lineProtocol.erase(std::prev(lineProtocol.end()));
-        // LOG("Transmitting...");
+        LOG("Transmitting...");
         transmit(std::move(lineProtocol));
     }
 
