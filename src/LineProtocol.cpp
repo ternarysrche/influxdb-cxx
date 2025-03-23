@@ -24,7 +24,7 @@
 
 #include <iomanip>
 #include <sstream>
-#include <telemetry_m4.h>
+#include <logger.h>
 
 namespace influxdb
 {
@@ -50,30 +50,30 @@ namespace influxdb
         {
             static const std::string escapeCharacter{"\\"};
             std::string output;
-            // LOG("Theo reserves %d", input.size());
+            // LOG_INFO("Theo reserves %d", input.size());
             output.reserve(input.size());
 
-            // LOG("Theo sizing up searchStart");
+            // LOG_INFO("Theo sizing up searchStart");
             std::size_t searchStartPos{0};
             // Find the first character that needs to be escaped
-            // LOG("Theo sizing up escapeCharacterPos");
+            // LOG_INFO("Theo sizing up escapeCharacterPos");
             std::size_t escapedCharacterPos{input.find_first_of(escapedChars, searchStartPos)};
             while (escapedCharacterPos != std::string::npos)
             {
-                // LOG("Theo append output 1");
+                // LOG_INFO("Theo append output 1");
                 // Append the characters between the previous escaped character and the current one
                 output.append(input, searchStartPos, escapedCharacterPos - searchStartPos);
-                // LOG("Theo append output 2");
+                // LOG_INFO("Theo append output 2");
                 // Append the escape character and the character to be escaped
                 output.append(escapeCharacter).append(1, input[escapedCharacterPos]);
                 // Update the search start index to the character after the escaped character
                 searchStartPos = escapedCharacterPos + 1;
                 // Find the next character that needs to be escaped
-                // LOG("Theo append output find_first_of");
+                // LOG_INFO("Theo append output find_first_of");
                 escapedCharacterPos = input.find_first_of(escapedChars, searchStartPos);
             }
             // Append remaining characters after the final escaped character
-            // LOG("Theo append output search");
+            // LOG_INFO("Theo append output search");
             output.append(input, searchStartPos);
 
             return output;

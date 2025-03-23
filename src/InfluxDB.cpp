@@ -33,7 +33,7 @@
 #include <memory>
 #include <string>
 #include "InfluxDB.h"
-#include <telemetry_m4.h>
+#include <logger.h>
 
 namespace influxdb
 {
@@ -159,23 +159,23 @@ namespace influxdb
 
     void InfluxDB::write(const Point* points, const uint16_t* valid_indices, const uint16_t num_valid_indices)
     {
-        // LOG("inside write function...");
+        // LOG_INFO("inside write function...");
         std::string lineProtocol;
         const LineProtocol formatter{mGlobalTags};
-        // LOG("looping");
-        LOG("message has %u valid indices", num_valid_indices);
+        // LOG_INFO("looping");
+        LOG_INFO("message has %u valid indices", num_valid_indices);
         for (uint16_t i = 0; i < num_valid_indices; i++)
         {
-            // LOG("loop %d:", i);
-            LOG("valid index %d", valid_indices[i]);
-            LOG("%s", points[valid_indices[i]].getName().c_str());
-            LOG("%u", points[valid_indices[i]].getFields().size());
-            LOG("%s, %llu", points[valid_indices[i]].getFields().c_str(), points[valid_indices[i]].getTimestamp().time_since_epoch().count());
+            // LOG_INFO("loop %d:", i);
+            LOG_INFO("valid index %d", valid_indices[i]);
+            LOG_INFO("%s", points[valid_indices[i]].getName().c_str());
+            LOG_INFO("%u", points[valid_indices[i]].getFields().size());
+            LOG_INFO("%s, %llu", points[valid_indices[i]].getFields().c_str(), points[valid_indices[i]].getTimestamp().time_since_epoch().count());
             lineProtocol += formatter.format(points[valid_indices[i]]) + "\n";
         }
-        LOG("loop done...");
+        LOG_INFO("loop done...");
         lineProtocol.erase(std::prev(lineProtocol.end()));
-        LOG("Transmitting...");
+        LOG_INFO("Transmitting...");
         transmit(std::move(lineProtocol));
     }
 

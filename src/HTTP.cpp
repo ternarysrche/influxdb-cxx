@@ -27,7 +27,7 @@
 
 #include "InfluxDB/HTTP.h"
 #include "InfluxDB/InfluxDBException.h"
-#include "telemetry_m4.h"
+#include "logger.h"
 
 httpc_state_t* connection_ptr = nullptr;
 
@@ -40,9 +40,9 @@ void httpc_result_fn_(void* arg, httpc_result_t httpc_result, u32_t rx_content_l
     (void) (err);
     // httpc_result
     if(httpc_result != 0) {
-        LOG("Received HTTP response: ");
-    LOG("%d", httpc_result)
-    LOG("result function called!");
+        LOG_INFO("Received HTTP response: ");
+    LOG_INFO("%d", httpc_result)
+    LOG_INFO("result function called!");
     }
     
 }
@@ -66,7 +66,7 @@ err_t altcp_recv_fn_(void* arg, struct tcp_pcb* tpcb, struct pbuf* p, err_t err)
     char tmp = payload[(p->len) - 1];
     payload[(p->len) - 1] = 0;
     // if (AN ERROR OCCURED ACCORDING TO PAYLOAD)
-    LOG("RES: %s", payload);
+    LOG_INFO("RES: %s", payload);
     payload[(p->len) - 1] = tmp;
     pbuf_free(p);
     return ERR_OK;
@@ -104,7 +104,7 @@ namespace influxdb
 
             if (dbParameterPosition == std::string::npos)
             {
-                LOG("No Database specified");
+                LOG_INFO("No Database specified");
                 return "";
             }
             return url.substr(dbParameterPosition + 4);
@@ -129,8 +129,8 @@ namespace influxdb
 
     {
         std::string ip_string = parseIPAddress(url);
-        LOG("IP address: %s", ip_string.c_str());
-        LOG("URL: %s", url.c_str());
+        LOG_INFO("IP address: %s", ip_string.c_str());
+        LOG_INFO("URL: %s", url.c_str());
         ipaddr_aton(ip_string.c_str(), &ipaddr);
     }
 
@@ -150,13 +150,13 @@ namespace influxdb
     {
         if (request_info.auth_token == nullptr)
         {
-            LOG("No authentication token set!");
+            LOG_INFO("No authentication token set!");
         }
         std::string uri = "/write?db=" + databaseName;
         request_info.payload = lineprotocol.c_str();
         httpc_post_file(&ipaddr, port, uri.c_str(), &request_info, &connection_info,
                         altcp_recv_fn_, nullptr, &connection_ptr);
-        LOG("done posting file");
+        LOG_INFO("done posting file");
     }
 
 
